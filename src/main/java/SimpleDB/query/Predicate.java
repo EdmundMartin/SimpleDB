@@ -3,6 +3,7 @@ package SimpleDB.query;
 import SimpleDB.record.Schema;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Predicate {
@@ -79,5 +80,20 @@ public class Predicate {
         }
 
         return result;
+    }
+
+    @Override
+    public String toString() {
+        Iterator<Term> iterator = terms.iterator();
+        if (!iterator.hasNext()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(iterator.next().toString());
+        while (iterator.hasNext()) {
+            builder.append(" and ");
+            builder.append(iterator.next().toString());
+        }
+        return builder.toString();
     }
 }
