@@ -1,5 +1,6 @@
 package SimpleDB.query;
 
+import SimpleDB.plan.Plan;
 import SimpleDB.record.Schema;
 
 /**
@@ -28,7 +29,32 @@ public class Term {
     }
 
     // TODO - Reduction factor
+    public int reductionFactor(Plan plan) {
+        String leftName;
+        String rightName;
 
+        if (leftExpr.isFieldName() && rightExpr.isFieldName()) {
+            leftName = leftExpr.asFieldName();
+            rightName = rightExpr.asFieldName();
+            return Math.max(plan.distinctValues(leftName), plan.distinctValues(rightName));
+        }
+
+        if (leftExpr.isFieldName()) {
+            leftName = leftExpr.asFieldName();
+            return plan.distinctValues(leftName);
+        }
+
+        if (rightExpr.isFieldName()) {
+            rightName = rightExpr.asFieldName();
+            return plan.distinctValues(rightName);
+        }
+
+        if (leftExpr.asConstant().equals(rightExpr.asConstant())) {
+            return 1;
+        }
+
+        return Integer.MAX_VALUE;
+    }
 
     /**
      * Determine if this term is of the form "F=C"

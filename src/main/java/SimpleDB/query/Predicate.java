@@ -1,5 +1,6 @@
 package SimpleDB.query;
 
+import SimpleDB.plan.Plan;
 import SimpleDB.record.Schema;
 
 import java.util.ArrayList;
@@ -43,6 +44,14 @@ public class Predicate {
 
     // TODO - Reduction factor
 
+    public int reductionFactor(Plan plan){
+        int factor = 1;
+        for (Term t: terms) {
+            factor *= t.reductionFactor(plan);
+        }
+        return factor;
+    }
+
     /**
      * Return the sub-predicate that applies to the specified schema.
      */
@@ -80,6 +89,26 @@ public class Predicate {
         }
 
         return result;
+    }
+
+    public Constant equatesWithConstant(String fieldName) {
+        for (Term t: terms) {
+            Constant constant = t.equatesWithConstant(fieldName);
+            if (constant != null) {
+                return constant;
+            }
+        }
+        return null;
+    }
+
+    public String equatesWithField(String fieldName) {
+        for (Term t: terms) {
+            String field = t.equatesWithField(fieldName);
+            if (field != null) {
+                return field;
+            }
+        }
+        return null;
     }
 
     @Override

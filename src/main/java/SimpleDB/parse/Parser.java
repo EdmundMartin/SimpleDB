@@ -84,6 +84,20 @@ public class Parser {
         return new CreateIndexData(idxName, tableName, fieldName);
     }
 
+    public Object updateCmd() {
+        if (lexer.matchKeyword("insert")) {
+            return insert();
+        }
+        if (lexer.matchKeyword("delete")) {
+            return delete();
+        }
+        if (lexer.matchKeyword("update")) {
+            return modify();
+        }
+        return create();
+    }
+
+
     public DeleteData delete() {
         lexer.eatKeyword("delete");
         lexer.eatKeyword("from");
@@ -202,5 +216,16 @@ public class Parser {
             tables.addAll(tableList());
         }
         return tables;
+    }
+
+    private Object create() {
+        lexer.eatKeyword("create");
+        if (lexer.matchKeyword("table")) {
+            return createTable();
+        }
+        if (lexer.matchKeyword("view")) {
+            return createView();
+        }
+        return createIndex();
     }
 }

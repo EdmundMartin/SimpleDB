@@ -4,6 +4,7 @@ import SimpleDB.buffer.BufferManager;
 import SimpleDB.file.FileManager;
 import SimpleDB.log.LogManager;
 import SimpleDB.metadata.MetadataManager;
+import SimpleDB.plan.*;
 import SimpleDB.transaction.Transaction;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class SimpleDB {
     private final LogManager logManager;
     private final BufferManager bufferManager;
     private MetadataManager metadataManager;
+    private Planner planner;
 
     public SimpleDB(String dirname, int blockSize, int bufferSize) {
         File dbDirectory = new File(dirname);
@@ -38,6 +40,9 @@ public class SimpleDB {
             tx.recover();
         }
         metadataManager = new MetadataManager(isNew, tx);
+        QueryPlanner queryPlanner = new BasicQueryPlanner(metadataManager);
+        UpdatePlanner updatePlanner = new BasicUpdatePlanner(metadataManager);
+        planner = new Planner(queryPlanner, updatePlanner);
         tx.commit();
     }
 
